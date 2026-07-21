@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { buildFeatureFlags } from "./args";
-import { transformFunction } from "./main_sing_box";
+import { transformFileContent } from "./main_sing_box";
 import { buildSingBoxConfig } from "./sing_box";
 import type { SingBoxConfig } from "./sing_box_types";
 
@@ -83,10 +83,25 @@ test("includes endpoint tags in generated strategy groups", () => {
     assert.deepEqual(output.endpoints, [{ type: "wireguard", tag: "日本 WireGuard" }]);
 });
 
-test("transforms an upstream Sub-Store sing-box response without backend changes", () => {
-    const response = transformFunction({ status: 200, body: JSON.stringify(baseConfig) });
-    const output = JSON.parse(String(response.body)) as SingBoxConfig;
-    assert.equal(response.status, 200);
+test("transforms a complete Sing-Box JSON file", () => {
+    const content = transformFileContent(JSON.stringify(baseConfig));
+    const output = JSON.parse(content) as SingBoxConfig;
+    assert.ok(content.endsWith("\n"));
     assert.deepEqual(output.certificate, { store: "system" });
     assert.ok(output.outbounds?.some((outbound) => outbound.tag === "香港节点"));
+});
+
+test("rejects invalid Sing-Box JSON file content", () => {
+    assert.throws(() => transformFileContent("not json"), /文件内容不是有效的 Sing-Box JSON/);
+});
+
+test("rejects a non-object Sing-Box JSON root", () => {
+    assert.throws(() => transformFileContent("[]"), /Sing-Box JSON 的根节点必须是对象/);
+});
+
+test("rejects a Sing-Box JSON file without proxy outbounds or endpoints", () => {
+    assert.throws(
+        () => transformFileContent('{"log":{"level":"info"}}'),
+        /配置中缺少有效的代理 outbounds\/endpoints/
+    );
 });

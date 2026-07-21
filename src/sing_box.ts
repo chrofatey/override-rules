@@ -19,7 +19,7 @@ const MANAGED_STATIC_TAGS = new Set([
 
 function warn(message: string): void {
     try {
-        console.log(`[powerfullz 的 Sing-Box 覆写脚本] ${message}`);
+        console.log(`[powerfullz 的 Sing-Box 文件脚本] ${message}`);
     } catch {
         // Some embedded runtimes do not expose console.
     }
@@ -169,7 +169,7 @@ export function buildSingBoxConfig(config: SingBoxConfig, flags: FeatureFlags): 
     const protocolNodes = [...protocolOutbounds, ...inputEndpoints];
     if (protocolNodes.length === 0) {
         throw new Error(
-            "[powerfullz 的 Sing-Box 覆写脚本] 错误：配置中缺少有效的代理 outbounds/endpoints"
+            "[powerfullz 的 Sing-Box 文件脚本] 错误：配置中缺少有效的代理 outbounds/endpoints"
         );
     }
 
@@ -238,7 +238,7 @@ export function buildSingBoxConfig(config: SingBoxConfig, flags: FeatureFlags): 
     for (const node of protocolNodes) {
         if (generatedTags.has(node.tag)) {
             throw new Error(
-                `[powerfullz 的 Sing-Box 覆写脚本] 错误：订阅节点 tag 与生成策略冲突：${node.tag}`
+                `[powerfullz 的 Sing-Box 文件脚本] 错误：输入节点 tag 与生成策略冲突：${node.tag}`
             );
         }
     }

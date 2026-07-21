@@ -53,9 +53,9 @@
 参考[最速 Substore 订阅管理指南](https://blog.l3zc.com/2025/03/clash-subscription-convert/)。
 
 - Mihomo 文件继续使用 `mihomoConfig` 类型与 `https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.min.js`。
-- Sing-Box 不需要修改或定制 Sub-Store：在订阅或组合订阅中加入「响应转换器（Response Transformer）」脚本，填写 `https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.sing-box.min.js`，下载时选择 `sing-box` 目标。Sing-Box 版本要求为 1.12 或更高。
+- Sing-Box 使用 Sub-Store 的普通文件：先让文件来源输出带有代理 `outbounds` 或 `endpoints` 的完整 Sing-Box JSON，再在文件的「脚本操作」中填写 `https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.sing-box.min.js`。Sing-Box 版本要求为 1.12 或更高。
 
-脚本通过 Sub-Store 上游已经提供的响应转换器处理其原生 Sing-Box JSON，不依赖 `singBoxConfig` 等新增文件类型。它保留输入配置中未接管的顶层字段，并重新生成出站、路由、DNS 与可选 TUN 配置。Sing-Box 配置仅采用动态 JS，不提供静态 JSON 组合矩阵。由于 Sing-Box 没有与 Mihomo 完全等价的策略组，`grouptype=2`（负载均衡）会降级为 `urltest`；`regex` 参数也会改为执行时枚举节点。
+文件脚本从 `$content` 读取完整 Sing-Box JSON 并将覆写结果写回 `$content`，不依赖 `singBoxConfig` 等新增文件类型，也不作为订阅的响应转换器使用。它保留输入配置中未接管的顶层字段，并重新生成出站、路由、DNS 与可选 TUN 配置。Sing-Box 配置仅采用动态 JS，不提供静态 JSON 组合矩阵。由于 Sing-Box 没有与 Mihomo 完全等价的策略组，`grouptype=2`（负载均衡）会降级为 `urltest`；`regex` 参数也会改为执行时枚举节点。
 
 2025/06/17 更新：新增 JavaScript 格式覆写，更易于维护，已经成为首选方式。JavaScript 格式覆写支持在脚本链接末尾加入`#`以传入参数，传入多个参数时，用`&`分隔，例如`#grouptype=2`。
 
@@ -90,7 +90,7 @@
 https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.min.js#grouptype=1
 ```
 
-Sing-Box 响应转换器示例（链接参数仍使用 `#` 传递）：
+Sing-Box 文件脚本示例（在文件的「脚本操作」中使用，链接参数仍通过 `#` 传递）：
 
 ```
 https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.sing-box.min.js#grouptype=1&adblock=true&sogoublock=false
