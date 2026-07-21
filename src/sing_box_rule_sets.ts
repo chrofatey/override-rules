@@ -3,7 +3,7 @@ import type { SingBoxRuleSet } from "./sing_box_types";
 
 const META_BASE = "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo";
 const SKK_BASE = "https://ruleset.skk.moe/sing-box";
-const PROJECT_BASE = `${CDN_URL}/gh/powerfullz/override-rules@dist/ruleset/sing-box`;
+const PROJECT_BASE = `${CDN_URL}/gh/chrofatey/override-rules@dist/ruleset/sing-box`;
 
 function binary(tag: string, url: string): SingBoxRuleSet {
     return { type: "remote", tag, format: "binary", url, update_interval: "1d" };

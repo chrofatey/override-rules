@@ -171,7 +171,7 @@ https://git.l3zc.com/powerfullz/override-rules/raw/branch/dist/yamls/config_gt-0
 项目内维护的 8 份规则会由 GitHub Actions 自动转换为 Sing-Box source JSON，再使用固定版本的 Sing-Box 1.12.25 编译为 SRS，并执行反编译语义校验。产物发布在 `dist` 分支的 `ruleset/sing-box/` 目录，同时随 Release 提供 `sing-box-rulesets.tar.gz`。
 
 ```text
-https://cdn.jsdelivr.net/gh/powerfullz/override-rules@dist/ruleset/sing-box/TikTok.srs
+https://cdn.jsdelivr.net/gh/chrofatey/override-rules@dist/ruleset/sing-box/TikTok.srs
 ```
 
 本项目直接引用的外部规则集使用其上游已有的 Sing-Box JSON/SRS 版本（SukkaW、217heidai、MetaCubeX），不重复编译。开发者可运行 `npm run rulesets` 生成并校验本地规则集；macOS arm64 与 Linux amd64 会自动下载经过 SHA-256 校验的编译器，其他平台请通过 `SING_BOX_BIN` 指定 Sing-Box 1.12+ 可执行文件。
