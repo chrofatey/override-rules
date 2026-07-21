@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "rules": [
+    {
+      "domain": [
+        "tigr1234566.github.io",
+        "rezvorck.github.io"
+      ]
+    }
+  ]
+}
