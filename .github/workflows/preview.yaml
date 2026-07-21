@@ -7,6 +7,7 @@ name: Deploy Preview
     paths:
       - 'src/**'
       - 'scripts/**'
+      - 'ruleset/**'
       - '.github/workflows/preview.yaml'
 
 permissions:
@@ -42,11 +43,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          mkdir -p publish/yamls
+          mkdir -p publish/yamls publish/ruleset/sing-box
 
           cp convert.js publish/convert.js
           cp convert.min.js publish/convert.min.js
+          cp convert.sing-box.js publish/convert.sing-box.js
+          cp convert.sing-box.min.js publish/convert.sing-box.min.js
           cp -a yamls/. publish/yamls/
+          cp -a generated-rulesets/sing-box/. publish/ruleset/sing-box/
 
           RELEASED_AT="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           export RELEASED_AT

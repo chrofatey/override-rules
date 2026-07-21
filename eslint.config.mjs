@@ -10,7 +10,16 @@ const tsRecommended = tseslint.configs.recommended.map((config) => ({
 export default [
     // 全局忽略
     {
-        ignores: ["yamls/**", "convert.js", "convert.min.js", "node_modules/**"],
+        ignores: [
+            "yamls/**",
+            "generated-rulesets/**",
+            ".cache/**",
+            "convert.js",
+            "convert.min.js",
+            "convert.sing-box.js",
+            "convert.sing-box.min.js",
+            "node_modules/**",
+        ],
     },
 
     // 主规则：应用于所有 JS 文件

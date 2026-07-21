@@ -9,6 +9,8 @@ export interface ScriptArgs {
     regex?: string;
     threshold?: string;
     tun?: string;
+    adblock?: string;
+    sogoublock?: string;
 }
 
 export type GroupType = 0 | 1 | 2;
@@ -23,6 +25,8 @@ export interface FeatureFlags {
     regexFilter: boolean;
     countryThreshold: number;
     tunEnabled: boolean;
+    adBlockEnabled: boolean;
+    sogouBlockEnabled: boolean;
 }
 
 export interface ProxyNode {

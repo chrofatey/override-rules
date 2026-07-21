@@ -49,14 +49,18 @@ jobs:
         run: |
           set -euo pipefail
 
-          mkdir -p publish/yamls
+          mkdir -p publish/yamls publish/ruleset/sing-box
 
           cp convert.js publish/convert.js
           cp convert.min.js publish/convert.min.js
+          cp convert.sing-box.js publish/convert.sing-box.js
+          cp convert.sing-box.min.js publish/convert.sing-box.min.js
           cp -a yamls/. publish/yamls/
+          cp -a generated-rulesets/sing-box/. publish/ruleset/sing-box/
 
           # Package yamls.tar.gz for release assets
           tar -czvf yamls.tar.gz yamls/
+          tar -czvf sing-box-rulesets.tar.gz -C generated-rulesets sing-box/
 
           RELEASED_AT="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           export RELEASED_AT
@@ -149,8 +153,11 @@ jobs:
 
           - JS 覆写 (最新版, 推荐)：`https://cdn.jsdelivr.net/gh/${{ github.repository }}/convert.min.js`
           - JS 覆写 (当前版本)：`https://cdn.jsdelivr.net/gh/${{ github.repository }}@${{ env.VERSION }}/convert.min.js`
+          - Sing-Box JS 覆写 (最新版)：`https://cdn.jsdelivr.net/gh/${{ github.repository }}/convert.sing-box.min.js`
+          - Sing-Box JS 覆写 (当前版本)：`https://cdn.jsdelivr.net/gh/${{ github.repository }}@${{ env.VERSION }}/convert.sing-box.min.js`
           - YAML 索引 (最新版)：`https://cdn.jsdelivr.net/gh/${{ github.repository }}/manifest.json`
           - YAML 索引 (当前版本)：`https://cdn.jsdelivr.net/gh/${{ github.repository }}@${{ env.VERSION }}/manifest.json`
+          - Sing-Box SRS：`https://cdn.jsdelivr.net/gh/${{ github.repository }}@dist/ruleset/sing-box/`
           EOF
 
       - name: Create GitHub release
@@ -161,7 +168,10 @@ jobs:
           files: |
             convert.js
             convert.min.js
+            convert.sing-box.js
+            convert.sing-box.min.js
             yamls.tar.gz
+            sing-box-rulesets.tar.gz
 
       - name: Purge jsDelivr cache
         run: |
@@ -169,3 +179,5 @@ jobs:
 
           curl -fsS "https://purge.jsdelivr.net/gh/${{ github.repository }}/convert.min.js"
           curl -fsS "https://purge.jsdelivr.net/gh/${{ github.repository }}@${{ env.VERSION }}/convert.min.js"
+          curl -fsS "https://purge.jsdelivr.net/gh/${{ github.repository }}/convert.sing-box.min.js"
+          curl -fsS "https://purge.jsdelivr.net/gh/${{ github.repository }}@${{ env.VERSION }}/convert.sing-box.min.js"

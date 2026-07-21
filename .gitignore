@@ -4,7 +4,11 @@ node_modules/
 # Build artifacts
 convert.js
 convert.min.js
+convert.sing-box.js
+convert.sing-box.min.js
 yamls/
+generated-rulesets/
+.cache/
 
 # Logs
 npm-debug.log*

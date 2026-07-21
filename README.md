@@ -1,10 +1,10 @@
-## powerfullz 的 Mihomo/Substore 覆写规则
+## powerfullz 的 Mihomo / Sing-Box / Sub-Store 覆写规则
 
 ![](img/cover.png)
 
 [![](https://data.jsdelivr.com/v1/package/gh/powerfullz/override-rules/badge?style=rounded)](https://www.jsdelivr.com/package/gh/powerfullz/override-rules)
 
-本仓库为 Mihomo/Substore 设计，提供高效、灵活的覆写规则（**不建议用于 Stash**）。核心特色如下：
+本仓库为 Mihomo 与 Sing-Box 设计，配合 Sub-Store 提供高效、灵活的动态覆写规则（**不建议用于 Stash**）。核心特色如下：
 
 * 集成 [SukkaW/Surge](https://github.com/SukkaW/Surge) 与 [217heidai/adblockfilters](https://github.com/217heidai/adblockfilters) 等优质规则，兼容性强，覆盖面广。
 * 针对 Truth Social、E-Hentai、TikTok、加密货币等场景，新增专用分流规则，满足多样化需求。
@@ -52,6 +52,11 @@
 
 参考[最速 Substore 订阅管理指南](https://blog.l3zc.com/2025/03/clash-subscription-convert/)。
 
+- Mihomo 文件继续使用 `mihomoConfig` 类型与 `https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.min.js`。
+- Sing-Box 不需要修改或定制 Sub-Store：在订阅或组合订阅中加入「响应转换器（Response Transformer）」脚本，填写 `https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.sing-box.min.js`，下载时选择 `sing-box` 目标。Sing-Box 版本要求为 1.12 或更高。
+
+脚本通过 Sub-Store 上游已经提供的响应转换器处理其原生 Sing-Box JSON，不依赖 `singBoxConfig` 等新增文件类型。它保留输入配置中未接管的顶层字段，并重新生成出站、路由、DNS 与可选 TUN 配置。Sing-Box 配置仅采用动态 JS，不提供静态 JSON 组合矩阵。由于 Sing-Box 没有与 Mihomo 完全等价的策略组，`grouptype=2`（负载均衡）会降级为 `urltest`；`regex` 参数也会改为执行时枚举节点。
+
 2025/06/17 更新：新增 JavaScript 格式覆写，更易于维护，已经成为首选方式。JavaScript 格式覆写支持在脚本链接末尾加入`#`以传入参数，传入多个参数时，用`&`分隔，例如`#grouptype=2`。
 
 目前支持的参数：
@@ -65,6 +70,8 @@
 *   `regex`：各国家/地区代理组改用 `include-all` + 正则过滤模式，由 Mihomo 内核在运行时按正则动态筛选节点，而非在脚本执行时枚举节点名称（默认 false）[^regex]
 *   `tun`：启用 TUN 模式（gvisor 栈，自动配置路由排除地址与 DNS 劫持，默认 false）
 *   `threshold`：国家/地区节点数量小于该值时不显示分组（默认 2）
+*   `adblock`：Sing-Box 启用广告拦截规则并使用原生 `reject` 动作（默认 true；不影响 Mihomo 输出）
+*   `sogoublock`：Sing-Box 阻止搜狗输入法回传规则并使用原生 `reject` 动作（默认 false；不影响 Mihomo 输出）
 
 > **向后兼容**：旧的 `loadbalance` 参数仍然可用。当 `grouptype` 未指定时，`loadbalance=true` 等价于 `grouptype=2`，`loadbalance=false` 等价于 `grouptype=1`。
 
@@ -83,10 +90,22 @@
 https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.min.js#grouptype=1
 ```
 
+Sing-Box 响应转换器示例（链接参数仍使用 `#` 传递）：
+
+```
+https://cdn.jsdelivr.net/gh/powerfullz/override-rules/convert.sing-box.min.js#grouptype=1&adblock=true&sogoublock=false
+```
+
 如果想第一时间体验最新加入的 ~~Bug~~ 功能，可以使用 preview 分支的 Github Raw 链接：
 
 ```
 https://raw.githubusercontent.com/powerfullz/override-rules/refs/heads/preview/convert.min.js
+```
+
+Sing-Box 预览脚本为：
+
+```
+https://raw.githubusercontent.com/powerfullz/override-rules/refs/heads/preview/convert.sing-box.min.js
 ```
 
 ### 关于 DNS 泄露的说明
@@ -146,6 +165,16 @@ https://git.l3zc.com/powerfullz/override-rules/raw/branch/dist/yamls/config_gt-0
 ```
 
 *注：CI 仅套用了一份虚拟的 `fake_proxies.json` 来模拟生成 YAML，因此它无法像 JS 动态脚本那样根据你的实际节点智能生成专属分组策略，只能保守地包含常用的国家/地区。为了最高效的分流体验，仍强烈推荐使用 JS 覆写。*
+
+### Sing-Box SRS 规则集
+
+项目内维护的 8 份规则会由 GitHub Actions 自动转换为 Sing-Box source JSON，再使用固定版本的 Sing-Box 1.12.25 编译为 SRS，并执行反编译语义校验。产物发布在 `dist` 分支的 `ruleset/sing-box/` 目录，同时随 Release 提供 `sing-box-rulesets.tar.gz`。
+
+```text
+https://cdn.jsdelivr.net/gh/powerfullz/override-rules@dist/ruleset/sing-box/TikTok.srs
+```
+
+本项目直接引用的外部规则集使用其上游已有的 Sing-Box JSON/SRS 版本（SukkaW、217heidai、MetaCubeX），不重复编译。开发者可运行 `npm run rulesets` 生成并校验本地规则集；macOS arm64 与 Linux amd64 会自动下载经过 SHA-256 校验的编译器，其他平台请通过 `SING_BOX_BIN` 指定 Sing-Box 1.12+ 可执行文件。
 
 ### 如何自定义与贡献
 

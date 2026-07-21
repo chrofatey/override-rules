@@ -33,5 +33,7 @@ export function buildFeatureFlags(args: ScriptArgs): FeatureFlags {
         regexFilter: parseBool(args.regex),
         tunEnabled: parseBool(args.tun),
         countryThreshold: parseNumber(args.threshold, 2),
+        adBlockEnabled: parseBool(args.adblock, true),
+        sogouBlockEnabled: parseBool(args.sogoublock),
     };
 }
